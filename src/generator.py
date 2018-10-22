@@ -116,7 +116,7 @@ class TweetGenerator(object):
 				0, len(self.corpus) - CHUNK_LEN - 1
 			)
 
-			for diversity in [0.2, 0.7, 1.2]:
+			for diversity in DIVERSITIES:
 				print "diversity, ", diversity
 				generated = ''
 				sentence = self.corpus[start_index:start_index + CHUNK_LEN]
