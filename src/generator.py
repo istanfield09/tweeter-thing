@@ -10,8 +10,17 @@ import fake_corpus
 
 CHUNK_LEN = 40
 STEP = 3
+DIVERSITIES = [0.2, 0.7, 1.2]
 
 class TweetGenerator(object):
+        """
+        An object used to derive similar sounding tweets from a tweet corpus.
+        Each iteration strengthens character predictions, resulting in better
+        tweets.
+        
+        Uses snippets from Natural Languages Processing with 
+        Python (Krishna Bhavsar, Naresh Kumar, Pratap Dangeti).
+        """
 	def __init__(self):
 		self.characters = []
 		self.character_to_index = {}
@@ -20,7 +29,6 @@ class TweetGenerator(object):
 
 		self.chunks = []
 		self.next_char_from_chunk = []
-
 
 		self.model = Sequential()
 
@@ -41,6 +49,11 @@ class TweetGenerator(object):
 		self.tweet_corpus = tweets
 
 	def _build_mappings(self):
+                """
+                Constructs a map in both directions of characters to indices
+                to characters. Also derives a sampling of characters and characters
+                that follow them to build a prediction model with.
+                """
 		joined_corpus = " ".join(self.tweet_corpus)
 		for i in xrange(0, len(joined_corpus) - CHUNK_LEN, STEP):
 			self.chunks.append(joined_corpus[i:i + CHUNK_LEN])
@@ -53,6 +66,9 @@ class TweetGenerator(object):
 		self.corpus = joined_corpus
 
 	def _vectorize_indices_preprocess(self):
+                """
+                Builds vectors used to predict next character.
+                """
 		x = numpy.zeros(
 			(len(self.chunks), CHUNK_LEN, len(self.characters)),
 			dtype=numpy.bool
@@ -99,6 +115,7 @@ class TweetGenerator(object):
 			start_index = random.randint(
 				0, len(self.corpus) - CHUNK_LEN - 1
 			)
+
 			for diversity in [0.2, 0.7, 1.2]:
 				print "diversity, ", diversity
 				generated = ''
